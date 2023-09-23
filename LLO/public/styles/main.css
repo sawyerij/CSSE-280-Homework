@@ -5,11 +5,10 @@
     align-items: center;
 }
 
-.button {
+#button {
     height: 45px;
     width: 30px;
     font: bold;
-    background-color: orange;
 }
 
 #newGame {
