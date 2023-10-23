@@ -7,18 +7,67 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
   <link rel="stylesheet" href="styles/main.css">
-  <title>App Name</title>
+  <title>My Photo Bucket</title>
 </head>
 
 <body>
-  <nav class="navbar navbar-dark fixed-top">
-    <a class="navbar-brand" href="#">App Name</a>
-  </nav>
-  <div id="listPage" class="container page-container">
-  </div>
-  
-  <button id="roseFireButton" type="button" class="btn">Sign in with Rosefire</button>
 
+  <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addPhoto">
+    <i class="material-icons">add</i>
+  </button>
+
+  <!-- Left Drawer -->
+
+  <div class="bmd-layout-container bmd-drawer-f-l bmd-drawer-overlay">
+    <header class="bmd-layout-header">
+      <div class="navbar navbar-dark bg-faded fixed-top justify-content-start">
+        <button class="navbar-toggler" type="button" data-toggle="drawer" data-target="#dw-s2">
+          <span class="sr-only">Toggle drawer</span>
+          <i class="material-icons">menu</i>
+        </button>
+        <a class="navbar-brand" href="#">&nbsp;&nbsp;My Photo Bucket</a>
+      </div>
+    </header>
+    <div id="dw-s2" class="bmd-layout-drawer bg-faded">
+      <ul class="list-group">
+        <a id="menuShowAllPhotos" class="list-group-item"><i class="material-icons">people_alt</i>Show All Photos</a>
+        <a id="menuShowMyPhotos" class="list-group-item"><i class="material-icons">person</i>Show My Photos</a>
+        <a id="menuSignOut" class="list-group-item"><i class="material-icons">login</i>Sign out</a>
+      </ul>
+    </div>
+    <main class="bmd-layout-content">
+      <div id="listPage" class="container page-container">
+        <div id="photoListContainer">
+          
+        </div>  
+      </div>
+    </main>
+  </div>
+
+  <div class="modal fade" id="addPhoto" tabindex="-1" role="dialog" aria-labelledby="Add Photo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" >Add Photo</h5>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+              <label for="formGroupExampleInput">Photo URL</label>
+              <input type="text" class="form-control" id="inputPhoto" placeholder="Photo URL">
+            </div>
+            <div class="form-group">
+              <label for="formGroupExampleInput2">Description</label>
+              <input type="text" class="form-control" id="inputDescription" placeholder="Description">
+              <span class="bmd-help">What is this photo from?</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
+          <button id="submitAddPhoto" type="button" class="btn btn-primary" data-dismiss="modal">ADD</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>

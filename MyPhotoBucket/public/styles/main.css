@@ -10,3 +10,65 @@ body {
 .page-container {
     margin-top: 75px;
 }
+
+#roseFireButton {
+    display: block;
+    margin: 30px auto;
+    width: 250px;
+    height: 40px;
+    background-color: #800000;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+img {
+    max-width: 200px;
+}
+
+
+#fab {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background-color: #800000;
+    color: white;
+    z-index: 999;
+}
+
+#listPage .card-title, #listPage .card-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bmd-layout-content {
+    height: 100vh;
+}
+
+.bmd-layout-drawer>header {
+    background-color: #800000;
+}
+
+.bmd-layout-drawer>ul {
+    background-color: #ddd;
+}
+
+.list-group-item :first-child {
+    margin-right: 0.75rem;
+}
+
+h1 {
+    margin: 60px auto;
+    text-align: center;
+}
+
+.card {
+    max-width: 250px;
+}
+
+#photoListContainer {
+    display: flex;
+    margin: 30px 10px;
+    text-align: center;
+}
