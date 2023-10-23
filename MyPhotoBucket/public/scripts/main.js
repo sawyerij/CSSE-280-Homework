@@ -6,7 +6,7 @@ rhit.FB_KEY_PHOTOURL = "url";
 rhit.FB_KEY_LAST_TOUCHED = "lastTouched";
 rhit.FB_KEY_AUTHOR = "author";
 rhit.fbPhotosManager = null;
-rhit.fbPhotoManager = null;
+rhit.fbSinglePhotoManager = null;
 rhit.fbAuthManager = null;
 
 function htmlToElement(html) {
@@ -61,7 +61,6 @@ rhit.ListPageController = class {
 			const newCard = this._createCard(photo);
 
 			newCard.onclick = (event) => {
-				// rhit.storage.setPhotoId(mq.id);
 				window.location.href = `/photo.html?id=${photo.id}`;
 			}
 			newList.appendChild(newCard);
@@ -101,19 +100,19 @@ rhit.Photo = class {
 
 
 rhit.FbPhotosManager = class {
-	constructor() {
+	constructor(uid) {
+		this._uid = uid;
 		this._documentSnapshots = [];
 		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_PHOTOS);
 		console.log("Created photos manager");
 		this._unsubscribe = null;
 	}
 	add(photoUrl, description) {
-
 		// Add a new document with a generated ID.
-
 		this._ref.add({
 			[rhit.FB_KEY_PHOTOURL]: photoUrl,
 			[rhit.FB_KEY_DESCRIPTION]: description,
+			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
 			[rhit.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
 		})
 		.then(function(docref) {
@@ -127,6 +126,10 @@ rhit.FbPhotosManager = class {
 	beginListening(changeListener) {
 
 		let query = this._ref.orderBy(rhit.FB_KEY_LAST_TOUCHED, "desc").limit(50);
+		console.log(rhit.FB_KEY_AUTHOR);
+		if (this._uid) {
+			query = query.where(rhit.FB_KEY_AUTHOR, "==", this._uid);
+		}
 
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			console.log("Updated photos");
@@ -153,6 +156,10 @@ rhit.FbPhotosManager = class {
 
 rhit.DetailPageController = class {
 	constructor() {
+		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
+			rhit.fbAuthManager.signOut();
+		});
+
 		document.querySelector("#submitEditPhoto").addEventListener("click", (event) => {
 			const photoUrl = document.querySelector("#inputPhoto").value;
 			const description = document.querySelector("#inputDescription").value;
@@ -161,8 +168,8 @@ rhit.DetailPageController = class {
 
 		$("#editPhotoDialog").on("show.bs.modal", (event) => {
 			// Pre Animation
-			document.querySelector("#inputPhoto").value = rhit.fbPhotoManager.photo;
-			document.querySelector("#inputDescription").value = rhit.fbPhotoManager.description;
+			document.querySelector("#inputPhoto").value = rhit.fbSinglePhotoManager.photo;
+			document.querySelector("#inputDescription").value = rhit.fbSinglePhotoManager.description;
 		});
 
 		$("#editPhotoDialog").on("shown.bs.modal", (event) => {
@@ -171,19 +178,23 @@ rhit.DetailPageController = class {
 		});
 
 		document.querySelector("#submitDeletePhoto").addEventListener("click", (event) => {
-			rhit.fbPhotoManager.delete().then(function() {
+			rhit.fbSinglePhotoManager.delete().then(function() {
 				console.log("Document successfully deleted");
-				window.location.href = "/";
+				window.location.href = "/list.html";
 			}).catch(function (error) {
-				console.error("Error removing te document: ", error);
+				console.error("Error removing the document: ", error);
 			});
 		});
 
-		rhit.fbPhotoManager.beginListening(this.updateView.bind(this));
+		rhit.fbSinglePhotoManager.beginListening(this.updateView.bind(this));
 	}
 	updateView() {
-		document.querySelector("#cardPhoto").innerHTML = rhit.fbPhotoManager.photo;
-		document.querySelector("#cardDescription").innerHTML = rhit.fbPhotoManager.description;
+		document.querySelector("#cardPhoto").innerHTML = `<img src="${rhit.fbSinglePhotoManager.photo}">`;
+		document.querySelector("#cardDescription").innerHTML = rhit.fbSinglePhotoManager.description;
+		if (rhit.fbSinglePhotoManager.author == rhit.fbAuthManager.uid) {
+			document.querySelector("#menuEdit").style.display = "flex";
+			document.querySelector("#menuDelete").style.display = "flex";
+		}
 	}
 }
 
@@ -248,6 +259,7 @@ rhit.LoginPageController = class {
 		document.querySelector("#roseFireButton").onclick = (event) => {
 			rhit.fbAuthManager.signIn();
 		};
+		rhit.startFirebaseUI();
 	}
 }
 
@@ -264,7 +276,7 @@ rhit.FbAuthManager = class {
 
 	}
 	signIn() {
-		Rosefire.signIn("5550a927-1072-4dd5-9ada-b63086820957", (err, rfUser) => {
+		Rosefire.signIn("ad75508c-bf66-4f3d-b3fc-5e33cbb422e0", (err, rfUser) => {
 			if (err) {
 				console.log("Rosefire error!", err);
 				return;
@@ -324,7 +336,7 @@ rhit.initializePage = function () {
 		if (!photoId) {
 			window.location.href = "/";
 		}
-		rhit.fbPhotoManager = new rhit.FbPhotosManager(photoId);
+		rhit.fbSinglePhotoManager = new rhit.FbSinglePhotoManager(photoId);
 		new rhit.DetailPageController();
 	}
 
@@ -349,7 +361,22 @@ rhit.main = function () {
 		rhit.initializePage();
 
 	});
+};
 
+rhit.startFirebaseUI = function() {
+	var uiConfig = {
+		signinSuccessUrl: '/list.html',
+		signInOptions: [
+			firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+			firebase.auth.EmailAuthProvider.PROVIDER_ID,
+			firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+			firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
+		],
+	};
+	// Initialize the FirebaseUI Widget using Firebase.
+	const ui = new firebaseui.auth.AuthUI(firebase.auth());
+	// The start method will wait until the DOM is loaded.
+	ui.start('#firebaseui-auth-container', uiConfig);
 };
 
 rhit.main();

@@ -42,6 +42,10 @@ img {
     text-overflow: ellipsis;
 }
 
+.dropdown-menu-right {
+    left: -128px;
+}
+
 .bmd-layout-content {
     height: 100vh;
 }
@@ -64,11 +68,20 @@ h1 {
 }
 
 .card {
+    align-items: center;
+    text-align: center;
     max-width: 250px;
+    max-height: 175px;
 }
 
 #photoListContainer {
     display: flex;
     margin: 30px 10px;
     text-align: center;
+}
+
+
+#menuEdit, 
+#menuDelete {
+    display: none;
 }
