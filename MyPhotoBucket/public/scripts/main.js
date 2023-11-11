@@ -273,8 +273,8 @@ rhit.FbAuthManager = class {
 			this._user = user;
 			changeListener();
 		});
-
 	}
+	
 	signIn() {
 		Rosefire.signIn("ad75508c-bf66-4f3d-b3fc-5e33cbb422e0", (err, rfUser) => {
 			if (err) {
@@ -353,11 +353,8 @@ rhit.main = function () {
 	rhit.fbAuthManager = new this.FbAuthManager();
 
 	rhit.fbAuthManager.beginListening(() => {
-		console.log("auth changed callback fired. TODO check for redirect and the init page");
-		console.log("isSignedIn = ", rhit.fbAuthManager.isSignedIn);
 
 		rhit.checkForRedirects();
-
 		rhit.initializePage();
 
 	});
@@ -365,7 +362,7 @@ rhit.main = function () {
 
 rhit.startFirebaseUI = function() {
 	var uiConfig = {
-		signinSuccessUrl: '/list.html',
+		signinSuccessUrl: '/',
 		signInOptions: [
 			firebase.auth.GoogleAuthProvider.PROVIDER_ID,
 			firebase.auth.EmailAuthProvider.PROVIDER_ID,
